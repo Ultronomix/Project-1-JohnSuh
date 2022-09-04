@@ -10,6 +10,7 @@ import com.github.project1.users.UserServlet;
 public class App {
     public static void main(String[] args) throws LifecycleException { 
 
+
         String docBase = System.getProperty("java.io.tmpdir");
         Tomcat webServer = new Tomcat();
         
@@ -17,6 +18,7 @@ public class App {
         webServer.setPort(5000);
         webServer.getConnector();
 
+        //dependency injection            
         UserDAO userDAO = new UserDAO();
         UserServlet userServlet = new UserServlet(userDAO);
         AuthServlet authServlet = new AuthServlet(userDAO);

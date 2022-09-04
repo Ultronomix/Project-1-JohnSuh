@@ -64,7 +64,7 @@ public class UserDAO {
     public String save(User user) {
         
         String sql = "INSERT INTO ers_users (username, email, password, given_name, surname, role_id) " +
-                     "VALUES (?, ?, ?, ?, ?, "; //put the default role_id last
+                     "VALUES (?, ?, ?, ?, ?"; //put the default role_id last
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -112,9 +112,10 @@ public class UserDAO {
     public void log(String level, String message) {
         try{
             File logFile = new File("logs/app.log");
-            BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile));
-            logWriter.write(String.format("[%s] at %s logged: [%s] %s\n", Thread.currentThread().getName(), LocalDate.now(), level.toUpperCase(), message));
-            logWriter.flush();
+            try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile))) {
+                logWriter.write(String.format("[%s] at %s logged: [%s] %s\n", Thread.currentThread().getName(), LocalDate.now(), level.toUpperCase(), message));
+                logWriter.flush();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
