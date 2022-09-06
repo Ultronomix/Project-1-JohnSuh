@@ -3,9 +3,11 @@ package com.github.project1;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
-import com.github.project1.auth.AuthServlet;
+import com.github.project1.services.AuthService;
+import com.github.project1.servlets.AuthServlet;
+import com.github.project1.servlets.UserServlet;
 import com.github.project1.users.UserDAO;
-import com.github.project1.users.UserServlet;
+
 
 public class App {
     public static void main(String[] args) throws LifecycleException { 
@@ -20,8 +22,9 @@ public class App {
 
         //dependency injection            
         UserDAO userDAO = new UserDAO();
+        AuthService authService = new AuthService(userDAO);
         UserServlet userServlet = new UserServlet(userDAO);
-        AuthServlet authServlet = new AuthServlet(userDAO);
+        AuthServlet authServlet = new AuthServlet(authService);
 
 
         final String rootContext = "/p0";

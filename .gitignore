@@ -1,0 +1,4 @@
+target/
+src/resources/
+logs/
+.vscode/settings.json

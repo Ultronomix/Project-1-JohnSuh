@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.project1.common.datasource.ConnectionFactory;
+import com.github.project1.common.exceptions.DataSourceException;
 
 public class UserDAO {
 
@@ -53,11 +54,8 @@ public class UserDAO {
             return mapResultSet(rs).stream().findFirst();
 
         } catch (SQLException e) {
-            System.err.println("Something went wrong when communicating with the database");
-            e.printStackTrace();
+            throw new DataSourceException(e);
         }
-
-        return Optional.empty();
 
     }
 
