@@ -1,6 +1,5 @@
 package com.github.project1.users;
 
-import java.util.Objects;
 
 // POJO = Plain Ol' Java Objects
 public class User {

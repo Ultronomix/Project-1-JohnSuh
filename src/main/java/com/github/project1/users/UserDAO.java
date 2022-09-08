@@ -180,9 +180,10 @@ public class UserDAO {
         try {
             File logFile = new File("logs/app.log");
             logFile.createNewFile();
-            BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile));
-            logWriter.write(String.format("[%s] at %s logged: [%s] %s\n", Thread.currentThread().getName(), LocalDate.now(), level.toUpperCase(), message));
-            logWriter.flush();
+            try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile))) {
+                logWriter.write(String.format("[%s] at %s logged: [%s] %s\n", Thread.currentThread().getName(), LocalDate.now(), level.toUpperCase(), message));
+                logWriter.flush();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
