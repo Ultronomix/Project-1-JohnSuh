@@ -3,11 +3,11 @@ package com.github.project1;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
-import com.github.project1.DAO.UserDAO;
-import com.github.project1.services.UserService;
-import com.github.project1.services.VerifyService;
-import com.github.project1.servlets.UserServlet;
-import com.github.project1.servlets.VerifyServlet;
+import com.github.project1.users.UserDAO;
+import com.github.project1.users.UserService;
+import com.github.project1.auth.AuthService;
+import com.github.project1.users.UserServlet;
+import com.github.project1.auth.AuthServlet;
 
 
 
@@ -18,25 +18,23 @@ public class App {
         String docBase = System.getProperty("java.io.tmpdir");
         Tomcat webServer = new Tomcat();
 
-        // Web server base configurations
         webServer.setBaseDir(docBase);
-        webServer.setPort(5000); // defaults to 8080, but we can set it to whatever port we want (as long as its open)
-        webServer.getConnector(); // formality, required in order for the server to receive requests
+        webServer.setPort(5000); 
+        webServer.getConnector(); 
 
-        // App component instantiation
         UserDAO userDAO = new UserDAO();
-        VerifyService verifyService = new VerifyService(userDAO);
+        AuthService verifyService = new AuthService(userDAO);
         UserService userService = new UserService(userDAO);
         UserServlet userServlet = new UserServlet(userService);
-        VerifyServlet verifyServlet = new VerifyServlet(verifyService);
+        AuthServlet verifyServlet = new AuthServlet(verifyService);
 
         // Web server context and servlet configurations
         final String rootContext = "/p1";
         webServer.addContext(rootContext, docBase);
         webServer.addServlet(rootContext, "UserServlet", userServlet).addMapping("/users");
-        webServer.addServlet(rootContext, "VerifyServlet", verifyServlet).addMapping("/verify");
+        webServer.addServlet(rootContext, "AuthServlet", verifyServlet).addMapping("/auth");
 
-        // Starting and awaiting web requests
+
         webServer.start();
         webServer.getServer().await();
 
