@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.project1.common.ErrorResponse;
 import com.github.project1.common.ResourceCreationResponse;
 import com.github.project1.common.exceptions.*;
+import com.github.project1.common.SecurityUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.github.project1.common.SecurityUtils.isAdmin;
+import static com.github.project1.common.SecurityUtils.requesterOwned;
 
 public class UserServlet extends HttpServlet {
 
@@ -43,9 +47,7 @@ public class UserServlet extends HttpServlet {
 
         UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
 
-        
-
-        if (!requester.getRole().equals("") && !requester.getUserId().equals(idToSearchFor)) { // Role who is applicable to view sensitive info
+        if (!isAdmin(requester) && !requesterOwned(requester, idToSearchFor)) { // Role who is applicable to view sensitive info
             // TODO encapsulate error response creation into its own utility method
             resp.setStatus(403); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester is not permitted to communicate with this endpoint.")));
