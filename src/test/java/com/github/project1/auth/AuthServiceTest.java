@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.github.project1.common.exceptions.AuthenticationException;
 import com.github.project1.common.exceptions.InvalidRequestException;
 import com.github.project1.users.Role;
 import com.github.project1.users.User;
@@ -56,7 +57,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void test_authenticate_throwsInvalidRequestException_givenInvalidCredentials() {
+    public void test_authenticate_throwsInvalidRequestException_givenTooShortPassword() {
         // Arrange
         Credentials credentialStub = new Credentials("invalid", "creds");
 
@@ -70,8 +71,47 @@ public class AuthServiceTest {
     }
 
     @Test
+    public void test_authenticate_throwsInvalidRequestException_givenTooShortUsername() {
+        // Arrange
+        Credentials credentialStub = new Credentials("v", "credentials");
+
+        // Act & Assert
+        assertThrows(InvalidRequestException.class, () -> {
+            sut.authenticate(credentialStub);
+        });
+
+        verify(mockUserDAO, times(0)).findUserByUsernameAndPassword(anyString(), anyString());
+
+    }
+
+    @Test
+    public void test_authenticate_throwsInvalidRequestException_givenNullCredentials() {
+        // Arrange
+        Credentials credentialStub = null;
+
+        // Act & Assert
+        assertThrows(InvalidRequestException.class, () -> {
+            sut.authenticate(credentialStub);
+        });
+
+        verify(mockUserDAO, times(0)).findUserByUsernameAndPassword(anyString(), anyString());
+
+    }
+
+    @Test
     public void test_authenticate_throwsAuthenticationException_givenInvalidCredentials() {
-        // TODO implement this test
+
+        //Arrange
+        Credentials credentialStub = new Credentials("unknown", "credentials");
+                when(mockUserDAO.findUserByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
+                
+        //Act
+        assertThrows(AuthenticationException.class, () -> {
+            sut.authenticate(credentialStub);
+        });
+        
+        //Assertion
+        verify(mockUserDAO, times(1)).findUserByUsernameAndPassword(anyString(), anyString());
     }
     
 }
