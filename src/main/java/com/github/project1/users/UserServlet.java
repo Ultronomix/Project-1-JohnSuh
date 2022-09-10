@@ -2,6 +2,7 @@ package com.github.project1.users;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.project1.common.ErrorResponse;
 import com.github.project1.common.ResourceCreationResponse;
 import com.github.project1.common.exceptions.*;
 
@@ -12,9 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class UserServlet extends HttpServlet {
 
@@ -30,16 +29,13 @@ public class UserServlet extends HttpServlet {
         ObjectMapper jsonMapper = new ObjectMapper();
         resp.setContentType("application/json");
 
+        // Access the HTTP session on the request (if it exists; otherwise it will be null)
         HttpSession userSession = req.getSession(false);
 
         if (userSession == null) {
             
-            resp.setStatus(401); 
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 401);
-            errorResponse.put("message", "Requester is not authenticated with the system, please log in.");
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.setStatus(401);
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(401, "Requester is not authenticated with the system, please log in.")));
             return;
         }
 
@@ -52,11 +48,7 @@ public class UserServlet extends HttpServlet {
         if (!requester.getRole().equals("") && !requester.getUserId().equals(idToSearchFor)) { // Role who is applicable to view sensitive info
             // TODO encapsulate error response creation into its own utility method
             resp.setStatus(403); // BAD REQUEST;
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 403);
-            errorResponse.put("message", "Requester is not permitted to communicate with this endpoint.");
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester is not permitted to communicate with this endpoint.")));
         }
 
         try {
@@ -72,31 +64,18 @@ public class UserServlet extends HttpServlet {
 
         } catch (InvalidRequestException | JsonMappingException e) {
 
-            // TODO encapsulate error response creation into its own utility method
             resp.setStatus(400); // BAD REQUEST;
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 400);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
 
         } catch (ResourceNotFoundException e) {
 
             resp.setStatus(404); // NOT FOUND; the sought resource could not be located
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 404);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(404, e.getMessage())));
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 500);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
 
         }
 
@@ -117,29 +96,17 @@ public class UserServlet extends HttpServlet {
 
             // TODO encapsulate error response creation into its own utility method
             resp.setStatus(400); // BAD REQUEST;
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 400);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
 
         } catch (ResourcePersistenceException e) {
 
             resp.setStatus(409); // CONFLICT; indicates that the provided resource could not be saved without conflicting with other data
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 409);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(409, e.getMessage())));
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 500);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
 
         }
 

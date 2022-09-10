@@ -2,6 +2,7 @@ package com.github.project1.auth;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.project1.common.ErrorResponse;
 import com.github.project1.common.exceptions.AuthenticationException;
 import com.github.project1.common.exceptions.DataSourceException;
 import com.github.project1.common.exceptions.InvalidRequestException;
@@ -14,8 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class AuthServlet extends HttpServlet {
 
@@ -37,40 +37,33 @@ public class AuthServlet extends HttpServlet {
             UserResponse responseBody = authService.authenticate(credentials);
             resp.setStatus(200);
 
+            // Establishes an HTTP session that is implicitly attached to the response as a cookie
             HttpSession userSession = req.getSession();
             userSession.setAttribute("authUser", responseBody);
-            
+
             resp.getWriter().write(jsonMapper.writeValueAsString(responseBody));
 
         } catch (InvalidRequestException | JsonMappingException e) {
 
-            // TODO encapsulate error response creation into its own utility method
             resp.setStatus(400); // BAD REQUEST;
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 400);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
 
         } catch (AuthenticationException e) {
 
             resp.setStatus(401); // UNAUTHORIZED; typically sent back when login fails or if a protected endpoint is hit by an unauthenticated user
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 401);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(401, e.getMessage())));
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("statusCode", 500);
-            errorResponse.put("message", e.getMessage());
-            errorResponse.put("timestamp", System.currentTimeMillis()); // TODO replace with LocalDateTime.now()
-            resp.getWriter().write(jsonMapper.writeValueAsString(errorResponse));
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
 
         }
 
+
     }
+    @Override // "logout" method
+        protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            req.getSession().invalidate();
+        }
 }
