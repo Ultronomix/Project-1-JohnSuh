@@ -1,7 +1,9 @@
 package com.github.project1.users;
 
+import java.io.Serializable;
+
 // Example of a response DTO
-public class UserResponse {
+public class UserResponse implements Serializable{
 
 
     private String userId;

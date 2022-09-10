@@ -11,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,11 @@ public class AuthServlet extends HttpServlet {
 
             Credentials credentials = jsonMapper.readValue(req.getInputStream(), Credentials.class);
             UserResponse responseBody = authService.authenticate(credentials);
-            resp.setStatus(200); // OK; general success; technically this is the default
+            resp.setStatus(200);
+
+            HttpSession userSession = req.getSession();
+            userSession.setAttribute("authUser", responseBody);
+            
             resp.getWriter().write(jsonMapper.writeValueAsString(responseBody));
 
         } catch (InvalidRequestException | JsonMappingException e) {
