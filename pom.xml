@@ -100,6 +100,51 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.7.7.201606060606</version>
+          <configuration>
+            <excludes>
+              <exclude>com/github/project1/common/datasource/*</exclude>
+              <exclude>com/github/project1/common/exceptions/*</exclude>
+              <exclude>com/github/project1/common/Request.*</exclude>
+              <exclude>com/github/project1/common/ErrorResponse.*</exclude>
+              <exclude>com/github/project1/common/ResourceCreationResponse.*</exclude>
+              <exclude>com/github/project1/auth/AuthServlet.*</exclude>
+              <exclude>com/github/project1/auth/Credentials.*</exclude>
+              <exclude>com/github/project1/App.*</exclude>
+              <exclude>com/github/project1/users/NewUserRequest.*</exclude>
+              <exclude>com/github/project1/users/UserResponse.*</exclude>
+              <exclude>com/github/project1/users/UserDAO.*</exclude>
+              <exclude>com/github/project1/users/UserServlet.*</exclude>
+              <exclude>com/github/project1/users/Role.*</exclude>
+              <exclude>com/github/project1/users/User.*</exclude>
+            </excludes>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                  <id>report</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+        <configuration>
+          <forkMode>always</forkMode>
+        </configuration>
+      </plugin>
       </plugins>
     </pluginManagement>
   </build>
