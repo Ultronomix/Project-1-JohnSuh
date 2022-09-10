@@ -13,7 +13,21 @@ public class User {
     private String isActive;
     private Role role;
 
+    
 
+    public User() {
+        super();
+    }
+
+    public User(String userId, String username, String email, String password, String givenName, String surname, Role role) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.givenName = givenName;
+        this.surname = surname;
+        this.role = role;
+    }
 
     public String getUserId() {
         return userId;
