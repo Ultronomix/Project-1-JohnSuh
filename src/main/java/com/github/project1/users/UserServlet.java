@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.project1.common.ErrorResponse;
 import com.github.project1.common.ResourceCreationResponse;
 import com.github.project1.common.exceptions.*;
-import com.github.project1.common.SecurityUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

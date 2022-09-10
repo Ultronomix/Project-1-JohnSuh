@@ -1,4 +1,4 @@
 target/
-src/resources/
-logs/
+src/main/java/com/github/project1/resources
 .vscode/settings.json
+logs/

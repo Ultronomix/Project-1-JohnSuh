@@ -9,11 +9,15 @@ import com.github.project1.auth.AuthService;
 import com.github.project1.users.UserServlet;
 import com.github.project1.auth.AuthServlet;
 
-
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class App {
+
+    private static Logger logger = LogManager.getLogger(App.class);
     public static void main(String[] args) throws LifecycleException { 
+
+        logger.info("Starting Application");
 
         String docBase = System.getProperty("java.io.tmpdir");
         Tomcat webServer = new Tomcat();
@@ -36,9 +40,8 @@ public class App {
 
 
         webServer.start();
+        logger.info("Web application successfully started");
         webServer.getServer().await();
-
-    
 
     }
 }
