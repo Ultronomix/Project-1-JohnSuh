@@ -3,19 +3,20 @@ package com.github.project1.users;
 import com.github.project1.common.datasource.ConnectionFactory;
 import com.github.project1.common.exceptions.DataSourceException;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 // DAO = Data Access Object
 public class UserDAO {
+
+    private static Logger logger = LogManager.getLogger(UserDAO.class);
 
     private final String baseSelect = "SELECT eu.user_id, eu.username, eu.email, eu.password, eu.given_name, eu.surname, eu.is_active, eu.role_id, eur.role_id " +
                                       "FROM ers_users eu " +
@@ -23,6 +24,8 @@ public class UserDAO {
                                       "ON eu.role_id = eur.role_id ";
 
     public List<User> getAllUsers() {
+
+        logger.info("Attempting to connect to the database at {}", LocalDateTime.now());
 
         List<User> allUsers = new ArrayList<>();
 
@@ -33,10 +36,12 @@ public class UserDAO {
             ResultSet rs = stmt.executeQuery(baseSelect);
 
             allUsers = mapResultSet(rs);
+            logger.info("Successful database connection at {}", LocalDateTime.now());
 
         } catch (SQLException e) {
             System.err.println("Something went wrong when communicating with the database");
             e.printStackTrace();
+            logger.fatal("Unsuccessful database connection at {}, error message: {}", LocalDateTime.now(), e.getMessage());
         }
 
         return allUsers;
@@ -45,17 +50,22 @@ public class UserDAO {
 
     public Optional<User> findUserById(UUID userId) {
 
+        logger.info("Attempting to search by user id at {}", LocalDateTime.now());
+
         String sql = baseSelect + "WHERE eu.user_id = ?";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
+            logger.info("User found by user id at {}", LocalDateTime.now());
             // JDBC Statement objects are vulnerable to SQL injection
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1, userId);
             ResultSet rs = pstmt.executeQuery();
             return mapResultSet(rs).stream().findFirst();
+            
 
         } catch (SQLException e) {
+            logger.warn("Unable to process at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             e.printStackTrace();
             throw new DataSourceException(e);
         }
@@ -64,10 +74,13 @@ public class UserDAO {
 
     public Optional<User> findUserByUsername(String username) {
 
+        logger.info("Attempting to search by username at {}", LocalDateTime.now());
+
         String sql = baseSelect + "WHERE eu.username = ?";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
+            logger.info("User found by username at {}", LocalDateTime.now());
             // JDBC Statement objects are vulnerable to SQL injection
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, username);
@@ -75,7 +88,7 @@ public class UserDAO {
             return mapResultSet(rs).stream().findFirst();
 
         } catch (SQLException e) {
-            // TODO log this exception
+            logger.warn("Unable to process at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             throw new DataSourceException(e);
         }
 
@@ -87,10 +100,13 @@ public class UserDAO {
 
     public Optional<User> findUserByEmail(String email) {
 
+        logger.info("Attempting to search by email at {}", LocalDateTime.now());
+
         String sql = baseSelect + "WHERE eu.email = ?";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
+            logger.info("User found by email at {}", LocalDateTime.now());
             // JDBC Statement objects are vulnerable to SQL injection
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, email);
@@ -98,6 +114,7 @@ public class UserDAO {
             return mapResultSet(rs).stream().findFirst();
 
         } catch (SQLException e) {
+            logger.warn("Unable to process at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             e.printStackTrace();
             // TODO log this exception
             throw new DataSourceException(e);
@@ -111,11 +128,12 @@ public class UserDAO {
 
     public Optional<User> findUserByUsernameAndPassword(String username, String password) {
 
+        logger.info("Attempting to search by username and password at {}", LocalDateTime.now());
         String sql = baseSelect + "WHERE eu.username = ? AND eu.password = ?";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
-
+            logger.info("User found by username and password at {}", LocalDateTime.now());
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, username);
             pstmt.setString(2, password);
@@ -123,6 +141,7 @@ public class UserDAO {
             return mapResultSet(rs).stream().findFirst();
 
         } catch (SQLException e) {
+            logger.warn("Unable to process at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             e.printStackTrace();
             throw new DataSourceException(e);
         }
@@ -131,6 +150,7 @@ public class UserDAO {
 
     public String save(User user) {
 
+        logger.info("Attempting to persist new user data at {}", LocalDateTime.now());
         String sql = "INSERT INTO app_users (username, email, password, given_name, surname, is_active, role_id) " +
                      "VALUES (?, ?, ?, ?, ?, TRUE, '2abcec3e-3e5b-41ba-bc5a-53808762e4b4')";
 
@@ -150,17 +170,18 @@ public class UserDAO {
             user.setUserId(rs.getString("user_id"));
 
         } catch (SQLException e) {
-           log("ERROR", e.getMessage());
-           e.printStackTrace();
+            logger.warn("Unable to persist data at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            e.printStackTrace();
         }
 
-        log("INFO", "Successfully persisted new used with id: " + user.getUserId());
+        logger.info("Successfully persisted new used with id: {} at {}", user.getUserId(), LocalDateTime.now());
 
         return user.getUserId();
 
     }
 
     private List<User> mapResultSet(ResultSet rs) throws SQLException {
+        logger.info("Attempting to map the result set of user info at {}", LocalDateTime.now());
         List<User> users = new ArrayList<>();
         while (rs.next()) {
             User user = new User();
@@ -176,16 +197,4 @@ public class UserDAO {
         return users;
     }
 
-    public void log(String level, String message) {
-        try {
-            File logFile = new File("logs/app.log");
-            logFile.createNewFile();
-            try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile))) {
-                logWriter.write(String.format("[%s] at %s logged: [%s] %s\n", Thread.currentThread().getName(), LocalDate.now(), level.toUpperCase(), message));
-                logWriter.flush();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

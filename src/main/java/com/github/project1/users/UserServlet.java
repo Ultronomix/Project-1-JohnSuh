@@ -12,13 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.github.project1.common.SecurityUtils.isAdmin;
 import static com.github.project1.common.SecurityUtils.requesterOwned;
 
 public class UserServlet extends HttpServlet {
+
+    private static Logger logger = LogManager.getLogger(UserServlet.class);
 
     private final UserService userService;
 
@@ -36,6 +42,7 @@ public class UserServlet extends HttpServlet {
         HttpSession userSession = req.getSession(false);
 
         if (userSession == null) {
+            logger.warn("User who is not logged in, attempted to access information at {}", LocalDateTime.now());
             
             resp.setStatus(401);
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(401, "Requester is not authenticated with the system, please log in.")));
@@ -47,18 +54,20 @@ public class UserServlet extends HttpServlet {
         UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
 
         if (!isAdmin(requester) && !requesterOwned(requester, idToSearchFor)) { // Role who is applicable to view sensitive info
-            // TODO encapsulate error response creation into its own utility method
+            logger.warn("Requester with invalid permissions attempted to view information at {}, {}", LocalDateTime.now(), requester.getUsername());
+            
             resp.setStatus(403); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester is not permitted to communicate with this endpoint.")));
         }
 
         try {
+            logger.info("Iterating through list of users at {}", LocalDateTime.now());
 
             if (idToSearchFor == null) {
                 List<UserResponse> allUsers = userService.getAllUsers();
-                
                 resp.getWriter().write(jsonMapper.writeValueAsString(allUsers));
             } else {
+                logger.info("User with matching id found at {}", LocalDateTime.now());
                 UserResponse foundUser = userService.getUserById(idToSearchFor);
                 resp.getWriter().write(jsonMapper.writeValueAsString(foundUser));
             }
@@ -67,16 +76,19 @@ public class UserServlet extends HttpServlet {
 
             resp.setStatus(400); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
+            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (ResourceNotFoundException e) {
 
             resp.setStatus(404); // NOT FOUND; the sought resource could not be located
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(404, e.getMessage())));
+            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
+            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         }
 
@@ -87,27 +99,31 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ObjectMapper jsonMapper = new ObjectMapper();
         resp.setContentType("application/json");
+        logger.info("Attempting to register a new user at {}", LocalDateTime.now());
         try {
-
+            
             NewUserRequest requestBody = jsonMapper.readValue(req.getInputStream(), NewUserRequest.class);
             ResourceCreationResponse responseBody = userService.register(requestBody);
             resp.getWriter().write(jsonMapper.writeValueAsString(responseBody));
-
+            logger.info("User successfully persisted at {}", LocalDateTime.now());
+        
         } catch (InvalidRequestException | JsonMappingException e) {
 
-            // TODO encapsulate error response creation into its own utility method
             resp.setStatus(400); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
+            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (ResourcePersistenceException e) {
 
             resp.setStatus(409); // CONFLICT; indicates that the provided resource could not be saved without conflicting with other data
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(409, e.getMessage())));
+            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
+            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         }
 
