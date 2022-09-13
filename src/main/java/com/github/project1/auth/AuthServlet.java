@@ -25,16 +25,17 @@ public class AuthServlet extends HttpServlet {
     private static Logger logger = LogManager.getLogger(AuthServlet.class);
 
     private final AuthService authService;
+    private final ObjectMapper jsonMapper;
 
-    public AuthServlet(AuthService authService) {
+    public AuthServlet(AuthService authService, ObjectMapper jsonMapper) {
         this.authService = authService;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         logger.info("A POST request was received by /p1/auth at {}", LocalDateTime.now());
-        ObjectMapper jsonMapper = new ObjectMapper();
         resp.setContentType("application/json");
 
 
@@ -74,7 +75,7 @@ public class AuthServlet extends HttpServlet {
 
     }
     @Override // "logout" method
-        protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            req.getSession().invalidate();
-        }
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getSession().invalidate();
+    }
 }
