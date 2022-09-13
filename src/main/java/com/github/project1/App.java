@@ -5,6 +5,7 @@ import org.apache.catalina.startup.Tomcat;
 
 import com.github.project1.users.UserDAO;
 import com.github.project1.users.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.project1.auth.AuthService;
 import com.github.project1.users.UserServlet;
 import com.github.project1.auth.AuthServlet;
@@ -29,8 +30,9 @@ public class App {
         UserDAO userDAO = new UserDAO();
         AuthService verifyService = new AuthService(userDAO);
         UserService userService = new UserService(userDAO);
-        UserServlet userServlet = new UserServlet(userService);
-        AuthServlet verifyServlet = new AuthServlet(verifyService);
+        ObjectMapper jsonMapper = new ObjectMapper();
+        UserServlet userServlet = new UserServlet(userService, jsonMapper);
+        AuthServlet verifyServlet = new AuthServlet(verifyService, jsonMapper);
 
         // Web server context and servlet configurations
         final String rootContext = "/p1";
