@@ -27,15 +27,15 @@ public class UserServlet extends HttpServlet {
     private static Logger logger = LogManager.getLogger(UserServlet.class);
 
     private final UserService userService;
+    private final ObjectMapper jsonMapper;
 
-    // TODO inject a shared reference to a configured ObjectMapper
-    public UserServlet(UserService userService) {
+    public UserServlet(UserService userService, ObjectMapper jsonMapper) {
         this.userService = userService;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ObjectMapper jsonMapper = new ObjectMapper();
         resp.setContentType("application/json");
 
         // Access the HTTP session on the request (if it exists; otherwise it will be null)
@@ -58,6 +58,7 @@ public class UserServlet extends HttpServlet {
             
             resp.setStatus(403); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester is not permitted to communicate with this endpoint.")));
+            return;
         }
 
         try {
@@ -97,16 +98,38 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ObjectMapper jsonMapper = new ObjectMapper();
+
         resp.setContentType("application/json");
+
+        // Access the HTTP session on the request (if it exists; otherwise it will be null)
+        HttpSession userSession = req.getSession(false);
+
+        if (userSession == null) {
+            logger.warn("User who is not logged in, attempted to access information at {}", LocalDateTime.now());
+            
+            resp.setStatus(401);
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(401, "Requester is not authenticated with the system, please log in.")));
+            return;
+        }
+
+        UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
+
+        if (!isAdmin(requester)) { // Role who is applicable to register new users
+            logger.warn("Requester with invalid permissions attempted to register at {}", LocalDateTime.now());
+            
+            resp.setStatus(403); // BAD REQUEST;
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester is not permitted to communicate with this endpoint.")));
+            return;
+        }
+  
         logger.info("Attempting to register a new user at {}", LocalDateTime.now());
         try {
-            
+                
             NewUserRequest requestBody = jsonMapper.readValue(req.getInputStream(), NewUserRequest.class);
             ResourceCreationResponse responseBody = userService.register(requestBody);
             resp.getWriter().write(jsonMapper.writeValueAsString(responseBody));
             logger.info("User successfully persisted at {}", LocalDateTime.now());
-        
+            
         } catch (InvalidRequestException | JsonMappingException e) {
 
             resp.setStatus(400); // BAD REQUEST;
@@ -127,5 +150,26 @@ public class UserServlet extends HttpServlet {
 
         }
 
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        logger.info("Attempting to alter a user at {}", LocalDateTime.now());
+        try {
+
+        }
+            
+            
+
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        logger.info("Attempting to delete a user at {}", LocalDateTime.now());
+        try {
+
+        }
     }
 }
