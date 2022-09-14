@@ -38,7 +38,6 @@ public class AuthServlet extends HttpServlet {
         logger.info("A POST request was received by /p1/auth at {}", LocalDateTime.now());
         resp.setContentType("application/json");
 
-
         try {
 
             Credentials credentials = jsonMapper.readValue(req.getInputStream(), Credentials.class);
