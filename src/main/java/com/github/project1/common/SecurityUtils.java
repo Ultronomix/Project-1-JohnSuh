@@ -9,6 +9,10 @@ public class SecurityUtils {
 
     }
 
+    public static boolean isFinanceMan(UserResponse subject) {
+        return subject.getRole().equals("finance_manager");
+    }
+
     // Only to be used with GET user requests
     public static boolean requesterOwned(UserResponse subject, String resourceId) {
         return subject.getUserId().equals(resourceId);
