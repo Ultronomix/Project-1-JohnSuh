@@ -154,22 +154,59 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
         resp.setContentType("application/json");
         logger.info("Attempting to alter a user at {}", LocalDateTime.now());
+
+        HttpSession userSession = req.getSession(false);
+
+        if (userSession == null) {
+            logger.warn("User who is not logged in, attempted to access information at {}", LocalDateTime.now());
+            
+            resp.setStatus(401);
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(401, "Requester is not authenticated with the system, please log in.")));
+            return;
+        }
+
+        UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
+
         try {
 
+            UpdateUserRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateUserRequest.class);
+
+            if (!requester.getRole().equals("admin") && !requester.getUserId().equals(requestPayload.getUserId())) {
+                resp.setStatus(403);
+                resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester not permitted to communicate with this endpoint.")));
+                return;
+            }
+
+            userService.updateUser(requestPayload);
+            resp.setStatus(204);
+
+        } catch (InvalidRequestException | JsonMappingException e) {
+            resp.setStatus(400);// * bad request
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
+        } catch (AuthenticationException e) {
+            resp.setStatus(409); // * conflict; indicate that provided resource could not be saved
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(409, e.getMessage())));
+        } catch (DataSourceException e) {
+            e.printStackTrace();
+            resp.setStatus(500); // * internal error
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
         }
+        resp.getWriter().write("\nEmail is: " + requester.getEmail()); // TODO change
+    }
             
             
 
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        logger.info("Attempting to delete a user at {}", LocalDateTime.now());
-        try {
+    // @Override
+    // protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    //     resp.setContentType("application/json");
+    //     logger.info("Attempting to delete a user at {}", LocalDateTime.now());
+    //     try {
 
-        }
-    }
-}
+    //     }
+    // }
+

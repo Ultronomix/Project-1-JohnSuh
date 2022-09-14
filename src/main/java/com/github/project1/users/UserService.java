@@ -6,7 +6,6 @@ import com.github.project1.common.exceptions.ResourceNotFoundException;
 import com.github.project1.common.exceptions.ResourcePersistenceException;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -35,8 +34,7 @@ public class UserService {
 
         try {
 
-            UUID uuid = UUID.fromString(userId);
-            return userDAO.findUserById(uuid)
+            return userDAO.findUserById(userId)
                           .map(UserResponse::new)
                           .orElseThrow(ResourceNotFoundException::new);
 
@@ -44,8 +42,39 @@ public class UserService {
             throw new InvalidRequestException("An invalid UUID string was provided.");
         }
 
+    }
+
+    public void updateUser(UpdateUserRequest updateUserRequest) {
+
+        System.out.println(updateUserRequest);
+ 
+        User userToUpdate = userDAO.findUserById(updateUserRequest.getUserId()).orElseThrow(ResourceNotFoundException::new);
 
 
+        if (updateUserRequest.getGivenName() != null) {
+            userToUpdate.setGivenName(updateUserRequest.getGivenName());
+        }
+
+        if (updateUserRequest.getSurname() != null) {
+            userToUpdate.setSurname(updateUserRequest.getSurname());
+        }
+
+        if (updateUserRequest.getUsername() != null) {
+            // you also need to make sure that the new username is not already taken
+            userToUpdate.setUsername(updateUserRequest.getUsername());
+        }
+
+        if (updateUserRequest.getEmail() != null) {
+            // you also need to make sure that the new email is not already taken
+            userToUpdate.setEmail(updateUserRequest.getEmail());
+        }
+
+        if (updateUserRequest.getPassword() != null) {
+            userToUpdate.setPassword(updateUserRequest.getPassword());
+        }
+
+        userDAO.updateUser(userToUpdate);
+       
     }
 
     public ResourceCreationResponse register(NewUserRequest newUser) {
