@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +17,7 @@ public class UserDAO {
 
     private static Logger logger = LogManager.getLogger(UserDAO.class);
 
-    private final String baseSelect = "SELECT eu.user_id, eu.username, eu.email, eu.password, eu.given_name, eu.surname, eu.is_active, eu.role_id, eur.role_id " +
+    private final String baseSelect = "SELECT eu.user_id, eu.username, eu.email, eu.password, eu.given_name, eu.surname, eu.is_active, eu.role_id, eur.role " +
                                       "FROM ers_users eu " +
                                       "JOIN ers_user_roles eur " +
                                       "ON eu.role_id = eur.role_id ";
@@ -48,7 +47,7 @@ public class UserDAO {
 
     }
 
-    public Optional<User> findUserById(UUID userId) {
+    public Optional<User> findUserById(String userId) {
 
         logger.info("Attempting to search by user id at {}", LocalDateTime.now());
 
@@ -191,10 +190,32 @@ public class UserDAO {
             user.setPassword(rs.getString("password"));
             user.setGivenName(rs.getString("given_name"));
             user.setSurname(rs.getString("surname"));
-            user.setRole(new Role(rs.getString("role_id"), rs.getString("role_id")));
+            user.setIsActive(rs.getString("is_active"));
+            user.setRole(new Role(rs.getString("role_id"), rs.getString("role")));
             users.add(user);
         }
         return users;
+    }
+
+    public void updateUser(User user) {
+        String sql = "UPDATE ers_users " +
+                     "SET username = ?, password = ?, email = ?, given_name = ?, surname = ?, is_active = ? " +
+                     "WHERE user_id = ?";
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user.getUsername());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setString(4, user.getGivenName());
+            pstmt.setString(5, user.getSurname());
+            pstmt.setString(6, user.getIsActive());
+            pstmt.setString(7, user.getUserId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.warn("Unable to persist data at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 }

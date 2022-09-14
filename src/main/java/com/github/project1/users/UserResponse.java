@@ -5,7 +5,6 @@ import java.io.Serializable;
 // Example of a response DTO
 public class UserResponse implements Serializable{
 
-
     private String userId;
     private String username;
     private String email;
