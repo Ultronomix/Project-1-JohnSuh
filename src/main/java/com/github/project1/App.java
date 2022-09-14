@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.project1.auth.AuthService;
 import com.github.project1.users.UserServlet;
 import com.github.project1.auth.AuthServlet;
+import com.github.project1.reimburs.ReimbDAO;
+import com.github.project1.reimburs.ReimbService;
+import com.github.project1.reimburs.ReimbServlet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,17 +31,21 @@ public class App {
         webServer.getConnector(); 
 
         UserDAO userDAO = new UserDAO();
+        ReimbDAO reimbDAO = new ReimbDAO();
         AuthService verifyService = new AuthService(userDAO);
         UserService userService = new UserService(userDAO);
+        ReimbService reimbService = new ReimbService(reimbDAO);
         ObjectMapper jsonMapper = new ObjectMapper();
         UserServlet userServlet = new UserServlet(userService, jsonMapper);
         AuthServlet verifyServlet = new AuthServlet(verifyService, jsonMapper);
+        ReimbServlet reimbServlet = new ReimbServlet(reimbService, jsonMapper);
 
         // Web server context and servlet configurations
         final String rootContext = "/p1";
         webServer.addContext(rootContext, docBase);
         webServer.addServlet(rootContext, "UserServlet", userServlet).addMapping("/users");
         webServer.addServlet(rootContext, "AuthServlet", verifyServlet).addMapping("/auth");
+        webServer.addServlet(rootContext, "ReimbServlet", reimbServlet).addMapping("/reimburse");
 
 
         webServer.start();
