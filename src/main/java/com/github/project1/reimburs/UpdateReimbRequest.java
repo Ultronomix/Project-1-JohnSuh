@@ -3,8 +3,9 @@ package com.github.project1.reimburs;
 public class UpdateReimbRequest {
 
     private String reimbId;
-    private int amount;
+    private float amount;
     private String resolved;
+    private String authorId;
     private String resolverId;
     private String statusId;
     private String typeId;
@@ -17,11 +18,11 @@ public class UpdateReimbRequest {
         this.reimbId = reimbId;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
@@ -31,6 +32,14 @@ public class UpdateReimbRequest {
 
     public void setResolved(String resolved) {
         this.resolved = resolved;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getResolverId() {
@@ -57,11 +66,14 @@ public class UpdateReimbRequest {
         this.typeId = typeId;
     }
 
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + amount;
+        result = prime * result + Float.floatToIntBits(amount);
+        result = prime * result + ((authorId == null) ? 0 : authorId.hashCode());
         result = prime * result + ((reimbId == null) ? 0 : reimbId.hashCode());
         result = prime * result + ((resolved == null) ? 0 : resolved.hashCode());
         result = prime * result + ((resolverId == null) ? 0 : resolverId.hashCode());
@@ -79,7 +91,12 @@ public class UpdateReimbRequest {
         if (getClass() != obj.getClass())
             return false;
         UpdateReimbRequest other = (UpdateReimbRequest) obj;
-        if (amount != other.amount)
+        if (Float.floatToIntBits(amount) != Float.floatToIntBits(other.amount))
+            return false;
+        if (authorId == null) {
+            if (other.authorId != null)
+                return false;
+        } else if (!authorId.equals(other.authorId))
             return false;
         if (reimbId == null) {
             if (other.reimbId != null)
@@ -111,8 +128,9 @@ public class UpdateReimbRequest {
 
     @Override
     public String toString() {
-        return "UpdateReimbRequest [amount=" + amount + ", reimbId=" + reimbId + ", resolved=" + resolved
-                + ", resolverId=" + resolverId + ", statusId=" + statusId + ", typeId=" + typeId + "]";
+        return "UpdateReimbRequest [amount=" + amount + ", authorId=" + authorId + ", reimbId=" + reimbId
+                + ", resolved=" + resolved + ", resolverId=" + resolverId + ", statusId=" + statusId + ", typeId="
+                + typeId + "]";
     }
 
 }

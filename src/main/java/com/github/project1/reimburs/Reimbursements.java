@@ -1,11 +1,14 @@
 package com.github.project1.reimburs;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class Reimbursements {
 
     private String reimbId;
-    private int amount;
-    private String submitted;
-    private String resolved;
+    private float amount;
+    private LocalDateTime submitted;
+    private LocalDateTime resolved;
     private String description;
     private String paymentId;
     private String authorId;
@@ -17,7 +20,7 @@ public class Reimbursements {
         super();
     }
 
-    public Reimbursements(String reimbId, int amount, String submitted, String resolved, String description, String paymentId, String authorId, String resolverId, String statusId, String typeId){
+    public Reimbursements(String reimbId, float amount, LocalDateTime submitted, LocalDateTime resolved, String description, String paymentId, String authorId, String resolverId, String statusId, String typeId){
         this.reimbId = reimbId;
         this.amount = amount;
         this.submitted = submitted;
@@ -38,27 +41,27 @@ public class Reimbursements {
         this.reimbId = reimbId;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setAmount(float f) {
+        this.amount = f;
     }
 
-    public String getSubmitted() {
+    public LocalDateTime getSubmitted() {
         return submitted;
     }
 
-    public void setSubmitted(String submitted) {
+    public void setSubmitted(LocalDateTime submitted) {
         this.submitted = submitted;
     }
 
-    public String getResolved() {
+    public LocalDateTime getResolved() {
         return resolved;
     }
 
-    public void setResolved(String resolved) {
+    public void setResolved(LocalDateTime resolved) {
         this.resolved = resolved;
     }
 
@@ -114,7 +117,7 @@ public class Reimbursements {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + amount;
+        result = prime * result + Float.floatToIntBits(amount);
         result = prime * result + ((authorId == null) ? 0 : authorId.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((paymentId == null) ? 0 : paymentId.hashCode());
@@ -136,7 +139,7 @@ public class Reimbursements {
         if (getClass() != obj.getClass())
             return false;
         Reimbursements other = (Reimbursements) obj;
-        if (amount != other.amount)
+        if (Float.floatToIntBits(amount) != Float.floatToIntBits(other.amount))
             return false;
         if (authorId == null) {
             if (other.authorId != null)

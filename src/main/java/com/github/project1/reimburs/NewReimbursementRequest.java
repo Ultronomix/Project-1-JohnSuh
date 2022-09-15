@@ -4,36 +4,17 @@ import com.github.project1.common.Request;
 
 public class NewReimbursementRequest implements Request<Reimbursements> {
 
-    private String reimbId;
-    private int amount;
-    private String submitted;
+    private float amount;
     private String description;
-    private String paymentId;
     private String authorId;
     private String typeId;
 
-    public String getReimbId() {
-        return reimbId;
-    }
-
-    public void setReimbId(String reimbId) {
-        this.reimbId = reimbId;
-    }
-
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
-    }
-
-    public String getSubmitted() {
-        return submitted;
-    }
-
-    public void setSubmitted(String submitted) {
-        this.submitted = submitted;
     }
 
     public String getDescription() {
@@ -42,14 +23,6 @@ public class NewReimbursementRequest implements Request<Reimbursements> {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
     }
 
     public String getAuthorId() {
@@ -68,26 +41,20 @@ public class NewReimbursementRequest implements Request<Reimbursements> {
         this.typeId = typeId;
     }
 
-    
-
     @Override
     public String toString() {
         return "NewReimbursementRequest [amount=" + amount + ", authorId=" + authorId + ", description=" + description
-                + ", paymentId=" + paymentId + ", reimbId=" + reimbId + ", submitted=" + submitted + ", typeId="
-                + typeId + "]";
+                + ", typeId=" + typeId + "]";
     }
 
     @Override
     public Reimbursements extractEntity() {
-        Reimbursements extractEntity = new Reimbursements();
-        extractEntity.setReimbId(this.reimbId);
-        extractEntity.setAmount(this.amount);
-        extractEntity.setSubmitted(this.submitted);
-        extractEntity.setDescription(this.description);
-        extractEntity.setPaymentId(this.paymentId);
-        extractEntity.setAuthorId(this.authorId);
-        extractEntity.setTypeId(this.typeId);
-        return null;
+        Reimbursements extractedEntity = new Reimbursements();
+        extractedEntity.setAmount(this.amount);
+        extractedEntity.setDescription(this.description);
+        extractedEntity.setAuthorId(this.authorId);
+        extractedEntity.setTypeId(this.typeId);
+        return extractedEntity;
     }
 
 }

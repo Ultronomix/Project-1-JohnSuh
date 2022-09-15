@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ReimbResponse implements Serializable {
 
     private String reimbId;
-    private int amount;
+    private float amount;
     private String submitted;
     private String resolved;
     private String description;
@@ -18,8 +18,8 @@ public class ReimbResponse implements Serializable {
     public ReimbResponse (Reimbursements subject) {
         this.reimbId = subject.getReimbId();
         this.amount = subject.getAmount();
-        this.submitted = subject.getSubmitted();
-        this.resolved = subject.getResolved();
+        this.submitted = subject.getSubmitted().toString();
+        this.resolved = subject.getResolved().toString();
         this.description = subject.getDescription();
         this.paymentId = subject.getPaymentId();
         this.authorId = subject.getAuthorId();
@@ -28,11 +28,13 @@ public class ReimbResponse implements Serializable {
         this.typeId = subject.getTypeId();
     }
 
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + amount;
+        result = prime * result + Float.floatToIntBits(amount);
         result = prime * result + ((authorId == null) ? 0 : authorId.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((paymentId == null) ? 0 : paymentId.hashCode());
@@ -45,6 +47,8 @@ public class ReimbResponse implements Serializable {
         return result;
     }
 
+
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -54,7 +58,7 @@ public class ReimbResponse implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         ReimbResponse other = (ReimbResponse) obj;
-        if (amount != other.amount)
+        if (Float.floatToIntBits(amount) != Float.floatToIntBits(other.amount))
             return false;
         if (authorId == null) {
             if (other.authorId != null)
@@ -103,6 +107,8 @@ public class ReimbResponse implements Serializable {
             return false;
         return true;
     }
+
+
 
     @Override
     public String toString() {
