@@ -172,7 +172,7 @@ public class UserServlet extends HttpServlet {
         
         UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
 
-        if (!isAdmin(requester)) {
+        if (!(requester.getRole().equals("employee"))) {
             logger.warn("Requester with invalid permissions attempted to update a user at {}", LocalDateTime.now());
 
             resp.setStatus(403);
@@ -183,9 +183,21 @@ public class UserServlet extends HttpServlet {
         try {
 
             UpdateUserRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateUserRequest.class);
-            userService.updateUser(requestPayload);
-            logger.info("User successfully updated at {}", LocalDateTime.now());
-            resp.setStatus(204);
+            
+            if (requestPayload.getUserId().equals(requester.getUserId())) {
+                userService.updateUser(requestPayload);
+                logger.info("User successfully updated at {}", LocalDateTime.now());
+                resp.setStatus(204);
+
+            } else {
+
+                logger.warn("Requester with invalid permissions attempted to update reimbursements at {}", LocalDateTime.now());
+
+                resp.setStatus(403);
+                resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester not allowed to communicate with this endpoint.")));
+                return;
+            }
+            
 
         } catch (InvalidRequestException | JsonMappingException e) {
             resp.setStatus(400);// * bad request

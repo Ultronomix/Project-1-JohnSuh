@@ -55,7 +55,7 @@ public class UserService {
         User userToUpdate = userDAO.findUserById(updateUserRequest.getUserId())
                                     .orElseThrow(ResourceNotFoundException::new);
 
-
+        
         if (updateUserRequest.getGivenName() != null) {
             userToUpdate.setGivenName(updateUserRequest.getGivenName());
         }
