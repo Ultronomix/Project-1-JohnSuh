@@ -7,7 +7,12 @@ import com.github.project1.common.exceptions.ResourceNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ReimbService {
+
+    private static Logger logger = LogManager.getLogger(ReimbService.class);
 
     private final ReimbDAO reimbDAO;
 
@@ -41,19 +46,37 @@ public class ReimbService {
 
     }
 
+    public ReimbResponse getReimbByStatus(String statusId) {
+
+        if (statusId == null || statusId.length() <= 0) {
+            throw new InvalidRequestException("A non-empty id must be provided!");
+        }
+
+        try {
+
+            return reimbDAO.findReimbByStatus(statusId)
+                            .map(ReimbResponse::new)
+                            .orElseThrow(ResourceNotFoundException::new);
+                            
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRequestException("An invalid UUID string was provided.");
+        }
+    }
+
     public void updateReimb(UpdateReimbRequest updateReimbRequest) {
         
         System.out.println(updateReimbRequest);
 
-        Reimbursements reimbToUpdate = reimbDAO.findReimbById(updateReimbRequest.getReimbId()).orElseThrow(ResourceNotFoundException::new);
+        Reimbursements reimbToUpdate = reimbDAO.findReimbById(updateReimbRequest.getReimbId())
+                                                .orElseThrow(ResourceNotFoundException::new);
     
         if (updateReimbRequest.getAmount() != 0) {
             reimbToUpdate.setAmount(reimbToUpdate.getAmount());
 
         }
 
-        if (updateReimbRequest.getStatusId() != null) {
-            reimbToUpdate.setStatusId(reimbToUpdate.getStatusId());
+        if (updateReimbRequest.getDescription() != null) {
+            reimbToUpdate.setDescription(reimbToUpdate.getDescription());
 
         }
 
