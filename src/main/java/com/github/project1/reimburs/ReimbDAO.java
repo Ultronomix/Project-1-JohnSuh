@@ -25,7 +25,7 @@ public class ReimbDAO {
                                       "ON er.type_id = ert.type_id " +
                                       "JOIN ers_users eu " +
                                       "ON er.author_id = eu.user_id " +
-                                      "JOIN ers_users " +
+                                      "LEFT JOIN ers_users " +
                                       "ON er.resolver_id = eu.user_id ";
 
     public List<Reimbursements> getAllReimbs() {
@@ -63,9 +63,14 @@ public class ReimbDAO {
             pstmt.setObject(1, UUID.fromString(reimbId));
             ResultSet rs = pstmt.executeQuery();
 
-            logger.info("Reimbursement found by reimbursement id at {}", LocalDateTime.now());
             
-            return mapResultSet(rs).stream().findFirst();
+            Optional<Reimbursements> _reimb = mapResultSet(rs).stream().findFirst();
+
+            if (_reimb.isPresent()) {
+                logger.info("Reimbursement found by reimbursement id at {}", LocalDateTime.now());
+            }
+
+            return _reimb;
 
         } catch (SQLException e) {
             logger.warn("Unable to process reimbursement id search at {}, error message: {}", LocalDateTime.now(), e.getMessage());
@@ -128,19 +133,21 @@ public class ReimbDAO {
 
     private List<Reimbursements> mapResultSet(ResultSet rs) throws SQLException {
 
-        logger.info("Attempting to map the result set of reimbursement info at {}", LocalDateTime.now());
         List<Reimbursements> reimbursements = new ArrayList<>();
         while (rs.next()) {
+            logger.info("Attempting to map the result set of reimbursement info at {}", LocalDateTime.now());
             Reimbursements reimbursement = new Reimbursements();
             reimbursement.setReimbId(rs.getString("reimb_id"));
             reimbursement.setAmount(rs.getFloat("amount"));
             reimbursement.setSubmitted(rs.getTimestamp("submitted").toLocalDateTime());
-            reimbursement.setResolved(rs.getTimestamp("resolved").toLocalDateTime());
+            Timestamp resolvedTs = rs.getTimestamp("resolved");
+            reimbursement.setResolved(resolvedTs == null ? null : resolvedTs.toLocalDateTime());
             reimbursement.setDescription(rs.getString("description"));
             reimbursement.setAuthorId(rs.getString("author_id"));
             reimbursement.setResolverId(rs.getString("resolver_id"));
             reimbursement.setStatusId(rs.getString("status_id"));
             reimbursement.setTypeId(rs.getString("type_id"));
+        
             reimbursements.add(reimbursement);
         }
 
@@ -149,6 +156,7 @@ public class ReimbDAO {
 
     public void updateReimb(Reimbursements reimb) {
         logger.info("Attempting to update reimbursement info at {}", LocalDateTime.now());
+        System.out.println(reimb);
         String sql = "UPDATE ers_reimbursements " +
                      "SET amount = ?, description = ?, type_id = ? " +
                      "WHERE reimb_id = ?";
@@ -159,7 +167,10 @@ public class ReimbDAO {
             pstmt.setString(2, reimb.getDescription());
             pstmt.setString(3, reimb.getTypeId());
             pstmt.setObject(4, UUID.fromString(reimb.getReimbId()));
-            pstmt.executeUpdate();
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated != 1) {
+                System.out.println("Sorry we didnt actually update anything.");
+            }
         } catch (SQLException e) {
             logger.warn("Unable to persist updated reimbursement at {}", LocalDateTime.now());
             e.printStackTrace();

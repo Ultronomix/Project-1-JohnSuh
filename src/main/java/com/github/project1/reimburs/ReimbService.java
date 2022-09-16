@@ -69,19 +69,20 @@ public class ReimbService {
 
         Reimbursements reimbToUpdate = reimbDAO.findReimbById(updateReimbRequest.getReimbId())
                                                 .orElseThrow(ResourceNotFoundException::new);
+
+        // check requester id against author id here (throw exception - 403 - if they dont match)
     
         if (updateReimbRequest.getAmount() != 0) {
-            reimbToUpdate.setAmount(reimbToUpdate.getAmount());
-
+            reimbToUpdate.setAmount(updateReimbRequest.getAmount());
         }
 
         if (updateReimbRequest.getDescription() != null) {
-            reimbToUpdate.setDescription(reimbToUpdate.getDescription());
+            reimbToUpdate.setDescription(updateReimbRequest.getDescription());
 
         }
 
         if (updateReimbRequest.getTypeId() != null) {
-            reimbToUpdate.setTypeId(reimbToUpdate.getTypeId());
+            reimbToUpdate.setTypeId(updateReimbRequest.getTypeId());
         }
 
         reimbDAO.updateReimb(reimbToUpdate);

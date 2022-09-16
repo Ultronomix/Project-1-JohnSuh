@@ -5,8 +5,6 @@ public class UpdateReimbRequest {
     private String reimbId;
     private float amount;
     private String description;
-    private String resolverId;
-    private String statusId;
     private String typeId;
 
     
@@ -35,22 +33,6 @@ public class UpdateReimbRequest {
         this.description = description;
     }
 
-    public String getResolverId() {
-        return resolverId;
-    }
-
-    public void setResolverId(String resolverId) {
-        this.resolverId = resolverId;
-    }
-
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
     public String getTypeId() {
         return typeId;
     }
@@ -64,7 +46,6 @@ public class UpdateReimbRequest {
         Reimbursements extractedEntity = new Reimbursements();
         extractedEntity.setAmount(this.amount);
         extractedEntity.setDescription(this.description);
-        extractedEntity.setStatusId(this.statusId);
         extractedEntity.setTypeId(this.typeId);
         return extractedEntity;
 
@@ -73,7 +54,7 @@ public class UpdateReimbRequest {
     @Override
     public String toString() {
         return "UpdateReimbRequest [amount=" + amount + ", description=" + description + ", reimbId=" + reimbId
-                + ", resolverId=" + resolverId + ", statusId=" + statusId + ", typeId=" + typeId + "]";
+                + ", typeId=" + typeId + "]";
     }
 
     
