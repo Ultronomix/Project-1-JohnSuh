@@ -6,8 +6,7 @@ public class UpdateReimbRequest {
     private float amount;
     private String description;
     private String typeId;
-
-    
+    private String authorId;
 
     public String getReimbId() {
         return reimbId;
@@ -39,6 +38,14 @@ public class UpdateReimbRequest {
 
     public void setTypeId(String typeId) {
         this.typeId = typeId;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public Reimbursements extractEntity() {

@@ -15,7 +15,87 @@ public class ReimbResponse implements Serializable {
     private String statusId;
     private String typeId;
 
-    public ReimbResponse (Reimbursements subject) {
+    public String getReimbId() {
+        return reimbId;
+    }
+
+    public void setReimbId(String reimbId) {
+        this.reimbId = reimbId;
+    }
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+
+    public String getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(String submitted) {
+        this.submitted = submitted;
+    }
+
+    public String getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(String resolved) {
+        this.resolved = resolved;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getResolverId() {
+        return resolverId;
+    }
+
+    public void setResolverId(String resolverId) {
+        this.resolverId = resolverId;
+    }
+
+    public String getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+    }
+
+    public ReimbResponse(Reimbursements subject) {
         this.reimbId = subject.getReimbId();
         this.amount = subject.getAmount();
         this.submitted = subject.getSubmitted().toString();
@@ -27,8 +107,6 @@ public class ReimbResponse implements Serializable {
         this.statusId = subject.getStatusId();
         this.typeId = subject.getTypeId();
     }
-
-    
 
     @Override
     public int hashCode() {
@@ -46,8 +124,6 @@ public class ReimbResponse implements Serializable {
         result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
         return result;
     }
-
-
 
     @Override
     public boolean equals(Object obj) {
@@ -108,8 +184,6 @@ public class ReimbResponse implements Serializable {
         return true;
     }
 
-
-
     @Override
     public String toString() {
         return "ReimbResponse [amount=" + amount + ", authorId=" + authorId + ", description=" + description
@@ -117,6 +191,4 @@ public class ReimbResponse implements Serializable {
                 + resolverId + ", statusId=" + statusId + ", submitted=" + submitted + ", typeId=" + typeId + "]";
     }
 
-    
-    
 }
