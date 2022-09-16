@@ -49,7 +49,7 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        String idToSearchFor = req.getParameter("user_id");
+        String idToSearchFor = req.getParameter("userId");
 
         UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
 
@@ -77,19 +77,19 @@ public class UserServlet extends HttpServlet {
 
             resp.setStatus(400); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
-            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to locate user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (ResourceNotFoundException e) {
 
             resp.setStatus(404); // NOT FOUND; the sought resource could not be located
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(404, e.getMessage())));
-            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to locate user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
-            logger.warn("Unable to locate at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to locate user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         }
 
@@ -123,30 +123,31 @@ public class UserServlet extends HttpServlet {
         }
   
         logger.info("Attempting to register a new user at {}", LocalDateTime.now());
+        
         try {
                 
             NewUserRequest requestBody = jsonMapper.readValue(req.getInputStream(), NewUserRequest.class);
             ResourceCreationResponse responseBody = userService.register(requestBody);
             resp.getWriter().write(jsonMapper.writeValueAsString(responseBody));
-            logger.info("User successfully persisted at {}", LocalDateTime.now());
+            logger.info("New user successfully persisted at {}", LocalDateTime.now());
             
         } catch (InvalidRequestException | JsonMappingException e) {
 
             resp.setStatus(400); // BAD REQUEST;
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
-            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to persist new user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (ResourcePersistenceException e) {
 
             resp.setStatus(409); // CONFLICT; indicates that the provided resource could not be saved without conflicting with other data
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(409, e.getMessage())));
-            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to persist new user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         } catch (DataSourceException e) {
 
             resp.setStatus(500); // INTERNAL SERVER ERROR; general error indicating a problem with the server
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
-            logger.warn("Unable to persist at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            logger.warn("Unable to persist new user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
 
         }
 
@@ -168,38 +169,47 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+        
         UserResponse requester = (UserResponse) userSession.getAttribute("authUser");
+
+        if (!isAdmin(requester)) {
+            logger.warn("Requester with invalid permissions attempted to update a user at {}", LocalDateTime.now());
+
+            resp.setStatus(403);
+            resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester not permitted to communicate with this endpoint.")));
+            return;
+        }
 
         try {
 
             UpdateUserRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateUserRequest.class);
-
-            if (!requester.getRole().equals("admin") && !requester.getUserId().equals(requestPayload.getUserId())) {
-                resp.setStatus(403);
-                resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(403, "Requester not permitted to communicate with this endpoint.")));
-                return;
-            }
-
             userService.updateUser(requestPayload);
+            logger.info("User successfully updated at {}", LocalDateTime.now());
             resp.setStatus(204);
 
         } catch (InvalidRequestException | JsonMappingException e) {
             resp.setStatus(400);// * bad request
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(400, e.getMessage())));
+            logger.warn("Unable to persist updated user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+
         } catch (AuthenticationException e) {
             resp.setStatus(409); // * conflict; indicate that provided resource could not be saved
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(409, e.getMessage())));
+            logger.warn("Unable to persist updated user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+
         } catch (DataSourceException e) {
             e.printStackTrace();
             resp.setStatus(500); // * internal error
             resp.getWriter().write(jsonMapper.writeValueAsString(new ErrorResponse(500, e.getMessage())));
+            logger.warn("Unable to persist updated user at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+
         }
-        resp.getWriter().write("\nEmail is: " + requester.getEmail()); // TODO change
+
     }
             
             
 
-    }
+}
 
     // @Override
     // protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -8,8 +8,12 @@ import com.github.project1.common.exceptions.ResourcePersistenceException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class UserService {
+
+    private static Logger logger = LogManager.getLogger(UserService.class);
 
     private final UserDAO userDAO;
 
@@ -48,7 +52,8 @@ public class UserService {
 
         System.out.println(updateUserRequest);
  
-        User userToUpdate = userDAO.findUserById(updateUserRequest.getUserId()).orElseThrow(ResourceNotFoundException::new);
+        User userToUpdate = userDAO.findUserById(updateUserRequest.getUserId())
+                                    .orElseThrow(ResourceNotFoundException::new);
 
 
         if (updateUserRequest.getGivenName() != null) {
