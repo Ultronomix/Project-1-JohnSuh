@@ -211,12 +211,3 @@ public class UserServlet extends HttpServlet {
 
 }
 
-    // @Override
-    // protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    //     resp.setContentType("application/json");
-    //     logger.info("Attempting to delete a user at {}", LocalDateTime.now());
-    //     try {
-
-    //     }
-    // }
-

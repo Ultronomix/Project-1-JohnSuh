@@ -3,7 +3,6 @@ package com.github.project1.status;
 import com.github.project1.common.exceptions.ResourceNotFoundException;
 import com.github.project1.reimburs.ReimbDAO;
 import com.github.project1.reimburs.Reimbursements;
-import com.github.project1.reimburs.UpdateReimbRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,22 +17,17 @@ public class StatusService {
         this.reimbDAO = reimbDAO;
     }
 
-    
-    
-    public void updateStatusAndResolver(UpdateReimbRequest updateStatusAndResolver) {
+    public void updateStatusAndResolver(UpdateStatusRequest updateStatusAndResolver) {
 
         System.out.println(updateStatusAndResolver);
 
-        Reimbursements statusAndResolver = reimbDAO.findReimbById(updateStatusAndResolver.getReimbId()).orElseThrow(ResourceNotFoundException::new);
-        
-        if (updateStatusAndResolver.getResolverId() != null) {
-            statusAndResolver.setResolverId(updateStatusAndResolver.getResolverId());
-        }
+        Reimbursements statusAndResolver = reimbDAO.findReimbById(updateStatusAndResolver.getReimbId())
+                                                   .orElseThrow(ResourceNotFoundException::new);
 
         if (updateStatusAndResolver.getStatusId() != null) {
             statusAndResolver.setStatusId(updateStatusAndResolver.getStatusId());
         }
 
-        reimbDAO.updateReimb(statusAndResolver);
+        reimbDAO.updateStatus(statusAndResolver);
     }
 }

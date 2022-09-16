@@ -57,7 +57,7 @@ public class StatusServlet extends HttpServlet {
 
         try {
 
-            UpdateReimbRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateReimbRequest.class);
+            UpdateStatusRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateStatusRequest.class);
             statusService.updateStatusAndResolver(requestPayload);
             resp.setStatus(204);
             
