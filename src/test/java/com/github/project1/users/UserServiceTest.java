@@ -134,24 +134,18 @@ public class UserServiceTest {
         verify(mockUserDAO, times(0)).findUserByUsernameAndPassword(anyString(), anyString());
     }
 
-    // @Test
-    // public void test_updateUser_GivenValidUserToUpdate() {
+    @Test
+    public void test_updateUser_GivenValidUserToUpdate() {
         
     //     //Arrange
-    //     User userStub = new User("some-uuid", "valid", "valid123@revature.net", "credentials", "Val", "Id", new Role("some-role-id", "employee"));
-    //     UpdateUserRequest userStubUpdate = new UpdateUserRequest("some-uuid", "valid", "valid123@revature.net", "credentials", "Val", "Id");
-    //     doReturn(Optional.of(userStub)).when(mockUserDAO).updateUser(any(User.class));
-    //     UserResponse expectedResult = new UserResponse(userStub);
+
 
     //     //Act
-    //     actualResult = sut.updateUser(userStubUpdate);
+
 
     //     //Assert
-    //     assertNotNull(actualResult);
-    //     assertEquals(expectedResult, actualResult);
-    //     verify(mockUserDAO, times(1)).updateUser(any(User.class));
 
 
-    // }
+    }
     
 }

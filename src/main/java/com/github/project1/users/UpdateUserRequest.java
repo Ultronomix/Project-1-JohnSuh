@@ -9,19 +9,6 @@ public class UpdateUserRequest {
         private String email;
         private String password;
 
-        
-
-
-    public UpdateUserRequest(String userId, String givenName, String surname, String username, String email,
-                String password) {
-            this.userId = userId;
-            this.givenName = givenName;
-            this.surname = surname;
-            this.username = username;
-            this.email = email;
-            this.password = password;
-        }
-
     public String getUserId() {
             return userId;
         }
