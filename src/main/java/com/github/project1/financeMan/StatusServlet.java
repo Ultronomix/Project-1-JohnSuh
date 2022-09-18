@@ -6,7 +6,6 @@ import com.github.project1.common.ErrorResponse;
 import com.github.project1.common.exceptions.AuthenticationException;
 import com.github.project1.common.exceptions.DataSourceException;
 import com.github.project1.common.exceptions.InvalidRequestException;
-import com.github.project1.reimburs.UpdateReimbRequest;
 import com.github.project1.users.UserResponse;
 
 import static com.github.project1.common.SecurityUtils.isFinanceMan;
@@ -19,12 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class StatusServlet extends HttpServlet {
-
-    private static Logger logger = LogManager.getLogger(StatusServlet.class);
 
     private final StatusService statusService;
     private final ObjectMapper jsonMapper;

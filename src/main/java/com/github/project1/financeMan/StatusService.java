@@ -4,12 +4,7 @@ import com.github.project1.common.exceptions.ResourceNotFoundException;
 import com.github.project1.reimburs.ReimbDAO;
 import com.github.project1.reimburs.Reimbursements;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class StatusService {
-
-    private static Logger logger = LogManager.getLogger(StatusService.class);
 
     private final ReimbDAO reimbDAO;
 
