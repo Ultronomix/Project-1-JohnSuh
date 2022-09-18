@@ -124,6 +124,7 @@ public class ReimbDAO {
             newReimbursement.setReimbId(rs.getString("reimb_id"));
 
         } catch (SQLException e) {
+            logger.warn("Unable to persist data at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             e.printStackTrace();
         }
 

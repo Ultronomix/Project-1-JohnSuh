@@ -1,6 +1,5 @@
 package com.github.project1.users;
 
-
 // POJO = Plain Ol' Java Objects
 public class User {
 
@@ -12,8 +11,6 @@ public class User {
     private String surname;
     private String isActive;
     private Role role;
-
-    
 
     public User() {
         super();

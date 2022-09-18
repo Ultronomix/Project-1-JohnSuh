@@ -45,7 +45,7 @@ public class AuthServiceTest {
         Credentials credentialStub = new Credentials("valid", "credentials");
         User userStub = new User("some-uuid", "valid", "valid123@revature.net", "credentials", "Val", "Id", new Role("some-role-id", "employee"));
         when(mockUserDAO.findUserByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.of(userStub));
-                UserResponse expectedResult = new UserResponse(userStub);
+        UserResponse expectedResult = new UserResponse(userStub);
                 
         //Act
         UserResponse actualResult = sut.authenticate(credentialStub);
@@ -103,7 +103,7 @@ public class AuthServiceTest {
 
         //Arrange
         Credentials credentialStub = new Credentials("unknown", "credentials");
-                when(mockUserDAO.findUserByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
+        when(mockUserDAO.findUserByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
                 
         //Act
         assertThrows(AuthenticationException.class, () -> {

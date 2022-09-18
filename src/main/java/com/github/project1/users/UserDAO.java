@@ -218,6 +218,7 @@ public class UserDAO {
             logger.warn("Unable to persist updated user info at {}, error message: {}", LocalDateTime.now(), e.getMessage());
             e.printStackTrace();
         }
+
     }
 
 }
