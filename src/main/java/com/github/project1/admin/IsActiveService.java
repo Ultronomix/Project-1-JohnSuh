@@ -42,7 +42,7 @@ public class IsActiveService {
 
     }
 
-    public void updateIsActive(IsActiveRequest updateIsActive) {
+    public UserResponse updateIsActive(IsActiveRequest updateIsActive) {
 
         System.out.println(updateIsActive);
 
@@ -53,7 +53,8 @@ public class IsActiveService {
             userToUpdate.setIsActive(updateIsActive.getIsActive());
         }
 
-        userDAO.updateUser(userToUpdate);
+        userDAO.updateIsActive(userToUpdate);
+        return new UserResponse(userToUpdate);
 
     }
 

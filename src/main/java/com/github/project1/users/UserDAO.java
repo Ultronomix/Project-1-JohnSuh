@@ -91,6 +91,7 @@ public class UserDAO {
 
         } catch (SQLException e) {
             logger.warn("Unable to process username search search at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            e.printStackTrace();
             throw new DataSourceException(e);
         }
 
@@ -199,7 +200,7 @@ public class UserDAO {
         return users;
     }
 
-    public void updateUser(User user) {
+    public String updateUser(User user) {
         logger.info("Attempting to update user info at {}", LocalDateTime.now());
         String sql = "UPDATE ers_users " +
                      "SET username = ?, password = ?, email = ?, given_name = ?, surname = ? " +
@@ -219,6 +220,26 @@ public class UserDAO {
             e.printStackTrace();
         }
 
+        return user.getUserId();
+
+    }
+
+    public String updateIsActive(User user) {
+        logger.info("Attempting to update active status at {}", LocalDateTime.now());
+        String sql = "UPDATE ers_users " +
+                     "SET is_active = ? " +
+                     "WHERE user_id = ?";
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user.getIsActive());
+            pstmt.setObject(6, UUID.fromString(user.getUserId()));
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.warn("Unable to persist updated active status at {}, error message: {}", LocalDateTime.now(), e.getMessage());
+            e.printStackTrace();
+        }
+
+        return user.getUserId();
     }
 
 }

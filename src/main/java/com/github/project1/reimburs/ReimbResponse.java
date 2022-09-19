@@ -15,6 +15,19 @@ public class ReimbResponse implements Serializable {
     private String statusId;
     private String typeId;
 
+    public ReimbResponse(Reimbursements subject) {
+        this.reimbId = subject.getReimbId();
+        this.amount = subject.getAmount();
+        this.submitted = subject.getSubmitted().toString();
+        this.resolved = subject.getResolved().toString();
+        this.description = subject.getDescription();
+        this.paymentId = subject.getPaymentId();
+        this.authorId = subject.getAuthorId();
+        this.resolverId = subject.getResolverId();
+        this.statusId = subject.getStatusId();
+        this.typeId = subject.getTypeId();
+    }
+
     public String getReimbId() {
         return reimbId;
     }
@@ -93,19 +106,6 @@ public class ReimbResponse implements Serializable {
 
     public void setTypeId(String typeId) {
         this.typeId = typeId;
-    }
-
-    public ReimbResponse(Reimbursements subject) {
-        this.reimbId = subject.getReimbId();
-        this.amount = subject.getAmount();
-        this.submitted = subject.getSubmitted().toString();
-        this.resolved = subject.getResolved().toString();
-        this.description = subject.getDescription();
-        this.paymentId = subject.getPaymentId();
-        this.authorId = subject.getAuthorId();
-        this.resolverId = subject.getResolverId();
-        this.statusId = subject.getStatusId();
-        this.typeId = subject.getTypeId();
     }
 
     @Override

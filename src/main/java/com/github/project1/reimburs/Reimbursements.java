@@ -19,13 +19,12 @@ public class Reimbursements {
         super();
     }
 
-    public Reimbursements(String reimbId, float amount, LocalDateTime submitted, LocalDateTime resolved, String description, String paymentId, String authorId, String resolverId, String statusId, String typeId){
+    public Reimbursements(String reimbId, float amount, LocalDateTime submitted, LocalDateTime resolved, String description, String authorId, String resolverId, String statusId, String typeId){
         this.reimbId = reimbId;
         this.amount = amount;
         this.submitted = submitted;
         this.resolved = resolved;
         this.description = description;
-        this.paymentId = paymentId;
         this.authorId = authorId;
         this.resolverId = resolverId;
         this.statusId = statusId;
@@ -44,8 +43,8 @@ public class Reimbursements {
         return amount;
     }
 
-    public void setAmount(float f) {
-        this.amount = f;
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 
     public LocalDateTime getSubmitted() {

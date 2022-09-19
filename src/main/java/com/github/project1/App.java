@@ -6,6 +6,8 @@ import org.apache.catalina.startup.Tomcat;
 import com.github.project1.users.UserDAO;
 import com.github.project1.users.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.project1.admin.IsActiveService;
+import com.github.project1.admin.IsActiveServlet;
 import com.github.project1.auth.AuthService;
 import com.github.project1.users.UserServlet;
 import com.github.project1.auth.AuthServlet;
@@ -37,6 +39,7 @@ public class App {
 
         AuthService verifyService = new AuthService(userDAO);
         UserService userService = new UserService(userDAO);
+        IsActiveService isActiveService = new IsActiveService(userDAO);
         ReimbService reimbService = new ReimbService(reimbDAO);
         StatusService statusService = new StatusService(reimbDAO);
 
@@ -44,6 +47,7 @@ public class App {
         
         UserServlet userServlet = new UserServlet(userService, jsonMapper);
         AuthServlet verifyServlet = new AuthServlet(verifyService, jsonMapper);
+        IsActiveServlet isActiveServlet = new IsActiveServlet(isActiveService, jsonMapper);
         ReimbServlet reimbServlet = new ReimbServlet(reimbService, jsonMapper);
         StatusServlet statusServlet = new StatusServlet(statusService, jsonMapper);
 
@@ -52,6 +56,7 @@ public class App {
         webServer.addContext(rootContext, docBase);
         webServer.addServlet(rootContext, "UserServlet", userServlet).addMapping("/users");
         webServer.addServlet(rootContext, "AuthServlet", verifyServlet).addMapping("/auth");
+        webServer.addServlet(rootContext, "IsActiveServlet", isActiveServlet).addMapping("/deactivate");
         webServer.addServlet(rootContext, "ReimbServlet", reimbServlet).addMapping("/reimburse");
         webServer.addServlet(rootContext, "StatusServlet", statusServlet).addMapping("/status");
 

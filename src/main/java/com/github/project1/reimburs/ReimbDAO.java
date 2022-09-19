@@ -17,7 +17,7 @@ public class ReimbDAO {
 
     private static Logger logger = LogManager.getLogger(ReimbDAO.class);
 
-    private final String baseSelect = "SELECT er.reimb_id, er.amount, er.submitted, er.resolved, er.description, er.payment_id, er.author_id, er.resolver_id, er.status_id, er.type_id, ers.status, ert.type, eu.user_id " +
+    private final String baseSelect = "SELECT er.reimb_id, er.amount, er.submitted, er.resolved, er.description, er.author_id, er.resolver_id, er.status_id, er.type_id, ers.status, ert.type, eu.user_id " +
                                       "FROM ers_reimbursements er " +
                                       "JOIN ers_reimbursement_statuses ers " +
                                       "ON er.status_id = ers.status_id " +
@@ -32,6 +32,7 @@ public class ReimbDAO {
 
         logger.info("Attempting to connect to the database at {}", LocalDateTime.now());
 
+        //Can't search for a null resolved column, resolver column; possibly by deleting the resolver and resolved from the reimbursements constructor?
         List<Reimbursements> allReimbs = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
@@ -80,18 +81,20 @@ public class ReimbDAO {
 
     }
 
-    public Optional<Reimbursements> findReimbByStatus(String status) {
+    public Optional<Reimbursements> findReimbByStatus(String statusId) {
         
         logger.info("Attempting to search by reimbursement status at {}", LocalDateTime.now());
 
-        String sql = baseSelect + "WHERE er.status = ?";
+        String sql = baseSelect + "WHERE er.status_id = ?";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             logger.info("Reimbursement found by status at {}", LocalDateTime.now());
+            // JDBC Statement objects are vulnerable to SQL injection
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, status);
+            pstmt.setString(1, statusId);
             ResultSet rs = pstmt.executeQuery();
+            
             return mapResultSet(rs).stream().findFirst();
 
 

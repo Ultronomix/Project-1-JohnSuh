@@ -16,13 +16,14 @@ public class User {
         super();
     }
 
-    public User(String userId, String username, String email, String password, String givenName, String surname, Role role) {
+    public User(String userId, String username, String email, String password, String givenName, String surname, String isActive, Role role) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.password = password;
         this.givenName = givenName;
         this.surname = surname;
+        this.isActive = isActive;
         this.role = role;
     }
 

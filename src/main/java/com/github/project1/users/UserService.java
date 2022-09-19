@@ -25,6 +25,7 @@ public class UserService {
 
     }
 
+
     public UserResponse getUserById(String userId) {
 
         if (userId == null || userId.length() <= 0) {
@@ -43,7 +44,7 @@ public class UserService {
 
     }
 
-    public void updateUser(UpdateUserRequest updateUserRequest) {
+    public UserResponse updateUser(UpdateUserRequest updateUserRequest) {
 
         System.out.println(updateUserRequest);
  
@@ -74,6 +75,7 @@ public class UserService {
         }
 
         userDAO.updateUser(userToUpdate);
+        return new UserResponse(userToUpdate);
        
     }
 

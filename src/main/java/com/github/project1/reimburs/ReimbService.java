@@ -41,24 +41,7 @@ public class ReimbService {
 
     }
 
-    public ReimbResponse getReimbByStatus(String statusId) {
-
-        if (statusId == null || statusId.length() <= 0) {
-            throw new InvalidRequestException("A non-empty id must be provided!");
-        }
-
-        try {
-
-            return reimbDAO.findReimbByStatus(statusId)
-                            .map(ReimbResponse::new)
-                            .orElseThrow(ResourceNotFoundException::new);
-                            
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestException("An invalid UUID string was provided.");
-        }
-    }
-
-    public void updateReimb(UpdateReimbRequest updateReimbRequest) {
+    public ReimbResponse updateReimb(UpdateReimbRequest updateReimbRequest) {
         
         System.out.println(updateReimbRequest);
 
@@ -81,6 +64,7 @@ public class ReimbService {
         }
 
         reimbDAO.updateReimb(reimbToUpdate);
+        return new ReimbResponse(reimbToUpdate);
 
     }
 
