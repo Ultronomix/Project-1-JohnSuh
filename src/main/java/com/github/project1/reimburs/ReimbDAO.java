@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class ReimbDAO {
 
     private static Logger logger = LogManager.getLogger(ReimbDAO.class);
-
+    
     private final String baseSelect = "SELECT er.reimb_id, er.amount, er.submitted, er.resolved, er.description, er.author_id, er.resolver_id, er.status_id, er.type_id, ers.status, ert.type, eu.user_id " +
                                       "FROM ers_reimbursements er " +
                                       "JOIN ers_reimbursement_statuses ers " +
@@ -25,8 +25,8 @@ public class ReimbDAO {
                                       "ON er.type_id = ert.type_id " +
                                       "JOIN ers_users eu " +
                                       "ON er.author_id = eu.user_id " +
-                                      "LEFT JOIN ers_users " +
-                                      "ON er.resolver_id = eu.user_id ";
+                                      "LEFT JOIN ers_users " + "ON er.resolver_id = eu.user_id ";
+                                      
 
     public List<Reimbursements> getAllReimbs() {
 
@@ -35,10 +35,14 @@ public class ReimbDAO {
         //Can't search for a null resolved column, resolver column; possibly by deleting the resolver and resolved from the reimbursements constructor?
         List<Reimbursements> allReimbs = new ArrayList<>();
 
+        String sql = baseSelect + "WHERE er.resolved IS NOT NULL " +
+                                  "AND er.resolver_id IS NOT NULL ";
+                                  
+
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(baseSelect);
+            ResultSet rs = stmt.executeQuery(sql);
 
             allReimbs = mapResultSet(rs);
             logger.info("Successful database connection at {}", LocalDateTime.now());
@@ -56,7 +60,9 @@ public class ReimbDAO {
 
         logger.info("Attempting to search by reimbursement id at {}", LocalDateTime.now());
         
-        String sql = baseSelect + "WHERE er.reimb_id = ?";
+        String sql = baseSelect + "WHERE er.reimb_id = ? " +
+                                  "AND er.resolved IS NOT NULL " +
+                                  "AND er.resolver_id IS NOT NULL ";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -85,7 +91,9 @@ public class ReimbDAO {
         
         logger.info("Attempting to search by reimbursement status at {}", LocalDateTime.now());
 
-        String sql = baseSelect + "WHERE er.status_id = ?";
+        String sql = baseSelect + "WHERE er.status_id = ? " +
+                                  "AND er.resolved IS NOT NULL " +
+                                  "AND er.resolver_id IS NOT NULL ";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 

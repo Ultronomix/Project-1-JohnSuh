@@ -9,7 +9,6 @@ public class Reimbursements {
     private LocalDateTime submitted;
     private LocalDateTime resolved;
     private String description;
-    private String paymentId;
     private String authorId;
     private String resolverId;
     private String statusId;
@@ -71,14 +70,6 @@ public class Reimbursements {
         this.description = description;
     }
 
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-
     public String getAuthorId() {
         return authorId;
     }
@@ -118,7 +109,6 @@ public class Reimbursements {
         result = prime * result + Float.floatToIntBits(amount);
         result = prime * result + ((authorId == null) ? 0 : authorId.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((paymentId == null) ? 0 : paymentId.hashCode());
         result = prime * result + ((reimbId == null) ? 0 : reimbId.hashCode());
         result = prime * result + ((resolved == null) ? 0 : resolved.hashCode());
         result = prime * result + ((resolverId == null) ? 0 : resolverId.hashCode());
@@ -148,11 +138,6 @@ public class Reimbursements {
             if (other.description != null)
                 return false;
         } else if (!description.equals(other.description))
-            return false;
-        if (paymentId == null) {
-            if (other.paymentId != null)
-                return false;
-        } else if (!paymentId.equals(other.paymentId))
             return false;
         if (reimbId == null) {
             if (other.reimbId != null)
@@ -190,7 +175,7 @@ public class Reimbursements {
     @Override
     public String toString() {
         return "Reimbursements [amount=" + amount + ", authorId=" + authorId + ", description=" + description
-                + ", paymentId=" + paymentId + ", reimbId=" + reimbId + ", resolved=" + resolved + ", resolverId="
+                + ", reimbId=" + reimbId + ", resolved=" + resolved + ", resolverId="
                 + resolverId + ", statusId=" + statusId + ", submitted=" + submitted + ", typeId=" + typeId + "]";
     }
 

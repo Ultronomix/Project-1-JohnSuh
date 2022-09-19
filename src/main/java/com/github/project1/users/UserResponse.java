@@ -89,6 +89,8 @@ public class UserResponse implements Serializable{
         this.role = role;
     }   
 
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -53,7 +53,7 @@ public class ReimbServlet extends HttpServlet {
             return;
         }
 
-        String idToSearchFor = req.getParameter("authorId");
+        String idToSearchFor = req.getParameter("reimbId");
 
         UserResponse requester = (UserResponse) reimbSession.getAttribute("authUser");
 

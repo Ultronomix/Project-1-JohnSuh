@@ -227,12 +227,11 @@ public class UserDAO {
     public String updateIsActive(User user) {
         logger.info("Attempting to update active status at {}", LocalDateTime.now());
         String sql = "UPDATE ers_users " +
-                     "SET is_active = ? " +
+                     "SET is_active = false " +
                      "WHERE user_id = ?";
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, user.getIsActive());
-            pstmt.setObject(6, UUID.fromString(user.getUserId()));
+            pstmt.setObject(1, UUID.fromString(user.getUserId()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.warn("Unable to persist updated active status at {}, error message: {}", LocalDateTime.now(), e.getMessage());

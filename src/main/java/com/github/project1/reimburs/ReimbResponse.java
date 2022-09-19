@@ -9,7 +9,6 @@ public class ReimbResponse implements Serializable {
     private String submitted;
     private String resolved;
     private String description;
-    private String paymentId;
     private String authorId;
     private String resolverId;
     private String statusId;
@@ -21,7 +20,6 @@ public class ReimbResponse implements Serializable {
         this.submitted = subject.getSubmitted().toString();
         this.resolved = subject.getResolved().toString();
         this.description = subject.getDescription();
-        this.paymentId = subject.getPaymentId();
         this.authorId = subject.getAuthorId();
         this.resolverId = subject.getResolverId();
         this.statusId = subject.getStatusId();
@@ -68,14 +66,6 @@ public class ReimbResponse implements Serializable {
         this.description = description;
     }
 
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-
     public String getAuthorId() {
         return authorId;
     }
@@ -115,7 +105,6 @@ public class ReimbResponse implements Serializable {
         result = prime * result + Float.floatToIntBits(amount);
         result = prime * result + ((authorId == null) ? 0 : authorId.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((paymentId == null) ? 0 : paymentId.hashCode());
         result = prime * result + ((reimbId == null) ? 0 : reimbId.hashCode());
         result = prime * result + ((resolved == null) ? 0 : resolved.hashCode());
         result = prime * result + ((resolverId == null) ? 0 : resolverId.hashCode());
@@ -145,11 +134,6 @@ public class ReimbResponse implements Serializable {
             if (other.description != null)
                 return false;
         } else if (!description.equals(other.description))
-            return false;
-        if (paymentId == null) {
-            if (other.paymentId != null)
-                return false;
-        } else if (!paymentId.equals(other.paymentId))
             return false;
         if (reimbId == null) {
             if (other.reimbId != null)
@@ -187,7 +171,7 @@ public class ReimbResponse implements Serializable {
     @Override
     public String toString() {
         return "ReimbResponse [amount=" + amount + ", authorId=" + authorId + ", description=" + description
-                + ", paymentId=" + paymentId + ", reimbId=" + reimbId + ", resolved=" + resolved + ", resolverId="
+                + ", reimbId=" + reimbId + ", resolved=" + resolved + ", resolverId="
                 + resolverId + ", statusId=" + statusId + ", submitted=" + submitted + ", typeId=" + typeId + "]";
     }
 
