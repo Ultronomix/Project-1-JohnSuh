@@ -119,6 +119,7 @@ public class StatusServlet extends HttpServlet {
         try {
 
             UpdateStatusRequest requestPayload = jsonMapper.readValue(req.getInputStream(), UpdateStatusRequest.class);
+            requestPayload.setResolverId(requester.getUserId());
             statusService.updateReimbAdmin(requestPayload);
             resp.setStatus(204);
             

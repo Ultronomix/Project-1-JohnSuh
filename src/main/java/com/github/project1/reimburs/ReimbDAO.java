@@ -35,8 +35,7 @@ public class ReimbDAO {
         //Can't search for a null resolved column, resolver column; possibly by deleting the resolver and resolved from the reimbursements constructor?
         List<Reimbursements> allReimbs = new ArrayList<>();
 
-        String sql = baseSelect + "WHERE er.resolved IS NOT NULL " +
-                                  "AND er.resolver_id IS NOT NULL ";
+        String sql = baseSelect;
                                   
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
@@ -60,9 +59,7 @@ public class ReimbDAO {
 
         logger.info("Attempting to search by reimbursement id at {}", LocalDateTime.now());
         
-        String sql = baseSelect + "WHERE er.reimb_id = ? " +
-                                  "AND er.resolved IS NOT NULL " +
-                                  "AND er.resolver_id IS NOT NULL ";
+        String sql = baseSelect + "WHERE er.reimb_id = ? ";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -91,9 +88,7 @@ public class ReimbDAO {
         
         logger.info("Attempting to search by reimbursement status at {}", LocalDateTime.now());
 
-        String sql = baseSelect + "WHERE er.status_id = ? " +
-                                  "AND er.resolved IS NOT NULL " +
-                                  "AND er.resolver_id IS NOT NULL ";
+        String sql = baseSelect + "WHERE er.status_id = ? ";
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -159,8 +154,9 @@ public class ReimbDAO {
             reimbursement.setResolverId(rs.getString("resolver_id"));
             reimbursement.setStatusId(rs.getString("status_id"));
             reimbursement.setTypeId(rs.getString("type_id"));
-        
+            
             reimbursements.add(reimbursement);
+            
         }
 
         return reimbursements;
@@ -198,7 +194,7 @@ public class ReimbDAO {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setObject(1, UUID.fromString(newStatus.getAuthorId()));
+            pstmt.setObject(1, UUID.fromString(newStatus.getResolverId()));
             pstmt.setString(2, newStatus.getStatusId());
             pstmt.setObject(3, UUID.fromString(newStatus.getReimbId()));
             pstmt.executeUpdate();

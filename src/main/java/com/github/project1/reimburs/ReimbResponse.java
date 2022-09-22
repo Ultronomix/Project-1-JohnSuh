@@ -18,7 +18,7 @@ public class ReimbResponse implements Serializable {
         this.reimbId = subject.getReimbId();
         this.amount = subject.getAmount();
         this.submitted = subject.getSubmitted().toString();
-        this.resolved = subject.getResolved().toString();
+        this.resolved = subject.getResolved() == null ? null : subject.getResolved().toString();
         this.description = subject.getDescription();
         this.authorId = subject.getAuthorId();
         this.resolverId = subject.getResolverId();
